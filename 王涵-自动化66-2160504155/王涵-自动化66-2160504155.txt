@@ -1,0 +1,68 @@
+function gray_level_reduce(imgpath)
+[A,M]=imread(imgpath);%读取图像，A为像素值，M为RGB值
+A=double(A);
+A_seven=(A/2);A_seven=floor(A_seven);%图像灰度级7级，以下依次递减
+A_six=(A/2^2);A_six=floor(A_six);
+A_five=(A/2^3);A_five=floor(A_five);
+A_four=(A/2^4);A_four=floor(A_four);
+A_three=(A/2^5);A_three=floor(A_three);
+A_two=(A/2^6);A_two=floor(A_two);
+A_one=(A/2^7);A_one=floor(A_one);
+figure(1);imshow(A,[0,255]);title('eight level');
+figure(2);imshow(A_seven,[0,127]);title('seven level');
+figure(3);imshow(A_six,[0,63]);title('six level');
+figure(4);imshow(A_five,[0,31]);title('five level');
+figure(5);imshow(A_four,[0,15]);title('four level');
+figure(6);imshow(A_three,[0,7]);title('three level');
+figure(7);imshow(A_two,[0,3]);title('two level');
+figure(8);imshow(A_one,[0,1]);title('one level');
+end
+
+function mean_variance(imgpath)
+[A,M]=imread(imgpath);%读取图像，A为像素值，M为RGB值
+A=double(A);%对A矩阵进行型转化，使可用于计算
+mean_value=mean2(A);%使用mean2函数求A均值
+variance=(std2(A))^2;%使用std2函数求A标准差，平方即为方差
+mean_value
+variance
+end
+
+function zoom(imgpath)
+[A,M]=imread(imgpath);%读取图像，A为像素值，M为RGB值
+nearest_interpolation=imresize(A,[2048,2048],'nearest');%使用imresize函数对A进行最邻近内插
+bilinear_interpolation=imresize(A,[2048,2048],'bilinear');%使用imresize函数对A进行双线性内插
+bicubic_interpolation=imresize(A,[2048,2048],'bicubic');%使用imresize函数对A进行双三次内插
+figure(1);imshow(A);title('artwork master');
+figure(2);imshow(nearest_interpolation);title('nearest-interpolation');
+figure(3);imshow(bilinear_interpolation);title('bilinear-interpolation');
+figure(4);imshow(bicubic_interpolation);title('bicubic-interpolation');
+end
+
+function shear_zoom(imgpath)
+[A,M]=imread(imgpath);%读取图像，A为像素值，M为RGB值
+T=[1 1 0;0 1 0;0 0 1];%输入矩阵T中参数Sh设为1
+tform_translate=maketform('affine', T);%构造tform结构体
+A_shear=imtransform(A,tform_translate);%偏移转换
+shear_nearest=imresize(A_shear,[2048,2048],'nearest');
+shear_bilinear=imresize(A_shear,[2048,2048],'bilinear');
+shear_bicubic=imresize(A_shear,[2048,2048],'bicubic');
+figure;
+subplot(2,2,1),imshow(A_shear);title('shear');
+subplot(2,2,2),imshow(shear_nearest);title('shear-nearest');
+subplot(2,2,3),imshow(shear_bilinear);title('shear-bilinear');
+subplot(2,2,4),imshow(shear_bicubic);title('shear-bicubic');
+end
+
+function revolve_zoom(imgpath)
+[A,M]=imread(imgpath);%读取图像，A为像素值，M为RGB值
+T=[cos(pi/6) sin(pi/6) 0;-sin(pi/6) cos(pi/6) 0;0 0 1];%输入矩阵T为30°旋转
+tform_translate=maketform('affine', T);%构造tform结构体
+A_revolve=imtransform(A,tform_translate);%旋转变换
+revolve_nearest=imresize(A_revolve,[2048,2048],'nearest');
+revolve_bilinear=imresize(A_revolve,[2048,2048],'bilinear'); revolve_bicubic=imresize(A_revolve,[2048,2048],'bicubic');
+figure;
+subplot(2,2,1),imshow(A_revolve);title('revolve');
+subplot(2,2,2),imshow(revolve_nearest);title('revolve-nearest');
+subplot(2,2,3),imshow(revolve_bilinear);title('revolve-bilinear');
+subplot(2,2,4),imshow(revolve_bicubic);title('revolve-bicubic');
+end
